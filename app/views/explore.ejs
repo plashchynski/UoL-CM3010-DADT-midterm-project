@@ -1,0 +1,47 @@
+<%- contentFor('title') %>
+Explore SNPs
+
+<%- contentFor('content') %>
+<h1>Results</h1>
+<div class="row">
+    <div class="col-12">
+        Below are 100 the most interesting SNPs and genotypes from <a href="https://www.snpedia.com/">SNPedia</a> database. SNPedia is a wiki investigating human genetics. It is a useful resource for finding information about a particular SNP. The content in SNPedia is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/us/">Creative Commons Attribution-Noncommercial-Share Alike 3.0 United States License</a>.
+        <div class="alert alert-warning mt-4" role="alert">
+            ⚠ Disclaimer: This information is not intended to diagnose, treat, cure, or prevent any disease.
+        </div>
+    </div>
+</div>
+
+<% for (var i = 0; i < results.length; i++) { %>
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-4 col-auto">
+                <div class="card-header">
+                    <%= results[i].id %>
+
+                    <span class="badge bg-secondary">
+                        <%= `(${results[i].allele1};${results[i].allele2})` %>
+                    </span>
+
+                    <%= results[i].summary %>
+
+                    <% if (results[i].repute == 'good') { %>
+                        <span class="badge rounded-pill text-bg-success">Good</span>
+                    <% } else if (results[i].repute == 'bad') { %>
+                        <span class="badge rounded-pill text-bg-danger">Bad</span>
+                    <% } else if (results[i].repute == 'mixed') { %>
+                        <span class="badge rounded-pill text-bg-warning">Mixed</span>
+                    <% } else { %>
+                        <span class="badge rounded-pill text-bg-info">Neutral</span>
+                    <% } %>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <%= results[i].description %>
+                        <a href="https://www.snpedia.com/index.php/<%= results[i].id %>" target="_blank">More info</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
