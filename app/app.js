@@ -22,6 +22,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // END OF EXTERNAL CODE
 
+// setup the layout
+const expressLayouts = require('express-ejs-layouts');
+
+app.use(expressLayouts);
+app.set('layout', 'layouts/layout');
+
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
+
+// Add bootstrap dist files as a virtual subdirectory for static files
+app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist')));
+
 require('./routes/main')(app);
 
 // START OF EXTERNAL CODE

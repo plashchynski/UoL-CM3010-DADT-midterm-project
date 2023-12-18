@@ -1,11 +1,27 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
-</html>
+<%- contentFor('title') %>
+Home page
+
+<%- contentFor('content') %>
+
+<div class="row">
+  <div class="col"></div>
+  <div class="col-3">
+    <div class="text-center">
+      <img class="rounded mx-auto d-block img-fluid mt-5" src="/images/logo.png">
+      <h1 class="mt-3">SNPedia Explorer</h1>
+      <p class="lead">
+        A comprehensive tool for exploring SNPs and analyzing DNA files.
+      </p>
+      <p class="mt-5">
+        Start by uploading your raw DNA file from 23andMe, AncestryDNA, MyHeritage, or other providers.
+      </p>
+
+      <form class="row g-3" ref='uploadForm' id='uploadForm' action='/process' method='post' encType="multipart/form-data">
+        <input type="file" name="file" class="form-control">
+        <input class="btn btn-primary mb-3" type='submit' value='Analyze'>
+      </form>
+
+    </div>
+  </div>
+  <div class="col"></div>
+</div>
