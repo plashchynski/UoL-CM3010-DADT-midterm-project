@@ -8,9 +8,26 @@ router.post('/', function(req, res, next) {
     return res.render('home');
   }
 
-  console.log(req.files.file);
+  const data = req.files.file.data.toString('utf8');
+  // parse data
+  let lines = data.split('\n');
+  // skip lines that start with #
+  lines = lines.filter(line => !line.startsWith('#'));
 
-  res.render('home');
+  // split every line by tab and create an array of objects
+  lines = lines.map(line => {
+    const values = line.split('\t');
+    return {
+      snp: values[0],
+      chromosome: values[1],
+      position: values[2],
+      genotype: values[3].trim()
+    }
+  });
+
+  console.log(lines[0]);
+
+  res.render('results');
 });
 
 module.exports = router;
