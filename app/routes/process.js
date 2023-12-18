@@ -1,8 +1,9 @@
 var express = require('express');
+const db = require('../services/db');
 var router = express.Router();
 
 /* POST process. */
-router.post('/', function(req, res, next) {
+router.post('/', async (req, res, next) => {
   
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.render('home');
@@ -10,24 +11,47 @@ router.post('/', function(req, res, next) {
 
   const data = req.files.file.data.toString('utf8');
   // parse data
-  let lines = data.split('\n');
+  let dna_data = data.split('\n');
   // skip lines that start with #
-  lines = lines.filter(line => !line.startsWith('#'));
+  dna_data = dna_data.filter(line => !line.startsWith('#'));
 
   // split every line by tab and create an array of objects
-  lines = lines.map(line => {
+  dna_data = dna_data.map(line => {
     const values = line.split('\t');
-    return {
-      snp: values[0],
-      chromosome: values[1],
-      position: values[2],
-      genotype: values[3].trim()
+    let allele1;
+    let allele2;
+
+    if (values[3] !== undefined) {
+      const genotype = values[3].trim();
+      allele1 = genotype[0];
+      allele2 = genotype[1];
+      if (allele2 === undefined) {
+        allele2 = allele1;
+      }
     }
+
+    return { snp_id: values[0], allele1, allele2 };
   });
 
-  console.log(lines[0]);
+  // filter out results with no SNP ID
+  dna_data = dna_data.filter(result => result.snp_id !== '');
 
-  res.render('results');
+  // filter out results with no genotype
+  dna_data = dna_data.filter(result => result.allele1 !== '-');
+
+  const query = 'SELECT SNP.id, SNP.description, Genotype.magnitude, Genotype.repute, Genotype.summary, Genotype.description, Genotype.allele1, Genotype.allele2 \
+                    FROM SNP \
+                    JOIN Genotype ON SNP.id = Genotype.snp_id \
+                WHERE ' +
+                dna_data.map(item => `(SNP.id = '${item.snp_id}' AND Genotype.allele1 = '${item.allele1}' AND Genotype.allele2 = '${item.allele2}')`).join(' OR ') +
+                ' ORDER BY Genotype.magnitude DESC \
+                LIMIT 100;';
+
+  const results = await db.query(query);
+
+  console.log(results);
+
+  res.render('results', { results });
 });
 
 module.exports = router;
