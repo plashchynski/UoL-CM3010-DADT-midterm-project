@@ -137,3 +137,5 @@ dataset/*
 
 # MacOS files
 .DS_Store
+
+*.pdf
