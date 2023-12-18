@@ -314,6 +314,20 @@ The data is imported into the database using the iPtyhon notebook "import_data.i
 
 ### 6. References
 
+#### 6.1 External code
+
+All external code used in this project is labeled with a comments "START OF EXTERNAL CODE" and "END OF EXTERNAL CODE". It comes with a inline reference to the source of the code.
+
+#### 6.2 Used libraries
+
+* [requests](https://docs.python-requests.org/en/latest/) - HTTP client library
+* [pandas](https://pandas.pydata.org/) - data analysis and manipulation tool
+* [mwparserfromhell](https://mwparserfromhell.readthedocs.io/en/latest/) - parser for MediaWiki wikicode
+* [sqlalchemy](https://www.sqlalchemy.org/) - SQL toolkit and Object Relational Mapper
+* [express.js](https://expressjs.com/) - web application framework for Node.js
+* [ejs](https://ejs.co/) - template engine for Node.js
+
+#### 6.3 Literature
 Amato, N. (2023) _Mastering database normalization: A comprehensive exploration of normal forms_ [Online] Available from: https://www.researchgate.net/publication/374509386_Mastering_database_normalization_A_comprehensive_exploration_of_normal_forms [17 December 2023].
 
 Lewis, D. (2016). _CO2209 Database systems._ London: University of London.
