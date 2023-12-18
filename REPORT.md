@@ -49,7 +49,7 @@ As a result of the data extraction stage we have a set of CSV files, each contai
 
 * `snps.csv` contains a list of SNPs, with their `ID` and a `Description`. The `ID` could be a name, like 'rs1805007', or a number, like 'i3003137'. The first one is a standard SNP ID, while the second one is a custom ID used by different personal genomics services as an alias for the standard ID or to represent a SNP that is not yet standardized and named officially. The `Description` is a short text briefly describing the SNP. Many SNPs do not have a description, but it is still included in the dataset for completeness. This list is complete and includes all SNPs extracted from SNPedia.
 
-* `genotypes.csv` contains a list of genotypes (variants) for each SNP. Each genotype has two alleles, one from each parent: `allele1` and `allele2`. The `magnitude` column indicates the strength of the association between the genotype and the related traits or diseases. The `repute` column indicates whether the genotype is considered 'good' or 'bad'. The `summary` column provides a brief description of the genotype. The `description` column provides a more detailed description of the genotype. `snp` is the ID of the SNP that the genotype is associated with. Here each SNP can have multiple genotypes, but each genotype is associated with only one SNP. This list is complete and includes all genotypes extracted from SNPedia.
+* `genotypes.csv` contains a list of genotypes (variants) for each SNP. Each genotype has two alleles, one from each parent: `allele1` and `allele2`. The `magnitude` column indicates the strength of the association between the genotype and the related traits or diseases. The `repute` column indicates whether the genotype is considered 'good', 'bad', or 'mixed'. The `summary` column provides a brief description of the genotype. The `description` column provides a more detailed description of the genotype. `snp` is the ID of the SNP that the genotype is associated with. Here each SNP can have multiple genotypes, but each genotype is associated with only one SNP. This list is complete and includes all genotypes extracted from SNPedia.
 
 Other files provide additional information about SNPs:
 
@@ -106,9 +106,9 @@ The `allele1` attribute is mandatory, but `allele2` is optional, as genotypes fr
 This entity stems from the `categories.csv` file. This file contains a list of snp-category pairs. The unique categories from this file will be extracted and used as Category names. This entity will have the following attributes:
 
 * A primary key `id` of type INT.
-* Non-key attributes `name`, `description`.
+* A non-key attribute `name`.
 
-The `name` is a mandatory attribute, while `description` is optional. Name will have a unique constraint, as each category should have a unique name. However, name is not a primary key, as it is subject to change, that leads to a change of the foreign keys in all related entities that potentially leads to performance penalty and update anomalies.
+The `name` is a mandatory attribute. Name will have a unique constraint, as each category should have a unique name. However, name is not a primary key, as it is subject to change, that leads to a change of the foreign keys in all related entities that potentially leads to performance penalty and update anomalies.
 
 This entity will have a many-to-many relationship with _SNP_ via a junction table.
 
@@ -145,12 +145,12 @@ The following tables will be created in the database:
 | Column | Type | Constraints | Description |
 | --- | --- | --- | --- |
 | id | INT | PRIMARY KEY | Unique identifier of the genotype |
-| snp_id | VARCHAR(255) | FOREIGN KEY | The ID of the SNP that the genotype belongs to |
+| snp_id | VARCHAR(255) | FOREIGN KEY, NOT NULL | The ID of the SNP that the genotype belongs to |
 | allele1 | VARCHAR(255) | NOT NULL | The first allele of the genotype |
 | allele2 | VARCHAR(255) | | The second allele of the genotype |
 | magnitude | INT | | The magnitude of the genotype |
-| repute | ENUM('good', 'bad') | | The reputation of the genotype |
-| summary | VARCHAR(255) | | A brief description of the genotype |
+| repute | ENUM('good', 'bad', 'mixed') | | The reputation of the genotype |
+| summary | TEXT | | A brief description of the genotype |
 | description | TEXT | | A detailed description of the genotype |
 
 ##### Category
@@ -159,7 +159,6 @@ The following tables will be created in the database:
 | --- | --- | --- | --- |
 | id | INT | PRIMARY KEY | Unique identifier of the category |
 | name | VARCHAR(255) | UNIQUE, NOT NULL | The name of the category |
-| description | TEXT | | A description of the category |
 
 ##### Literature
 
@@ -249,7 +248,7 @@ In over words, to be in 5NF, every join dependency should have a superkey compon
 
 ### 4. Database implementation
 
-#### 4.1 Database creation
+#### 4.1 Database Schema
 
 The database is created using the following SQL statements:
 
@@ -267,20 +266,19 @@ CREATE TABLE SNP (
 
 CREATE TABLE Genotype (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    snp_id VARCHAR(255),
+    snp_id VARCHAR(255) NOT NULL,
     allele1 VARCHAR(255) NOT NULL,
     allele2 VARCHAR(255),
     magnitude INT,
-    repute ENUM('good', 'bad'),
-    summary VARCHAR(255),
+    repute ENUM('good', 'bad', 'mixed'),
+    summary TEXT,
     description TEXT,
     FOREIGN KEY (snp_id) REFERENCES SNP(id)
 );
 
 CREATE TABLE Category (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) UNIQUE NOT NULL,
-    description TEXT
+    name VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE Literature (
@@ -306,6 +304,32 @@ CREATE TABLE SNP_Literature (
     FOREIGN KEY (snp_id) REFERENCES SNP(id),
     FOREIGN KEY (literature_id) REFERENCES Literature(id)
 );
+```
+
+#### 4.2 Data Import
+
+The data is imported into the database using the following Python script:
+
+```python
+import pandas as pd
+from sqlalchemy import create_engine
+
+# create a database connection
+engine = create_engine('mysql+mysqlconnector://root:@localhost:3306/snpedia_db')
+
+# SNP relation contains information from two files: snps.csv and rsnums.csv
+# load data from these files into a Pandas DataFrames
+snps_df = pd.read_csv('dataset/snps.csv', index_col=0)
+rsnums_df = pd.read_csv('dataset/rsnums.csv', index_col=0)
+
+# Merge these DataFrames into a single DataFrame
+df = pd.merge(snps_df, rsnums_df, how="left", left_index=True, right_index=True)
+
+# Drop unused columns, rename columns to match the database schema
+df = df.drop(columns=["gene"]).rename(columns={"Description": "description", "Gene": "gene", "Chromosome": "chromosome", "Position": "position"})[["description", "chromosome", "gene", "position"]]
+
+# Write the DataFrame to the database
+df.to_sql('SNP', con=engine, if_exists='append', index_label="id")
 ```
 
 ### 5. Web application

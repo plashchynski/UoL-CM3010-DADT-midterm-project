@@ -2,3 +2,5 @@ requests
 mwparserfromhell
 tqdm
 pandas
+mysql-connector-python
+sqlalchemy
