@@ -37,7 +37,7 @@ The dataset from SNPedia is full of useful information that can help answer many
 
 #### 2.3 Data extraction
 
-The data extraction process is implemented in the iPython notebook "build_dataset.ipynb". This process adheres to the guidelines specified on the [Bulk API](https://www.snpedia.com/index.php/Bulk) page of SNPedia. It consists of three primary steps: extracting raw data, transforming it into a structured format, and then saving this structured data as CSV files.
+The data extraction process is implemented in the iPython notebook "build_dataset.ipynb". The contents of the notebook are provided in the Appendix. This process adheres to the guidelines specified on the [Bulk API](https://www.snpedia.com/index.php/Bulk) page of SNPedia. It consists of three primary steps: extracting raw data, transforming it into a structured format, and then saving this structured data as CSV files.
 
 Initially, raw data is gathered from SNPedia using the [MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page) using the `requests` HTTP client library. This data is temporarily stored in a Pandas DataFrame for subsequent processing. The `mwparserfromhell` package is then used to parse the raw data, extracting relevant information from the Wikitext markup. Upon completion of this parsing step, the refined data is saved into CSV files using the 'to_csv' method of Pandas.
 
@@ -308,29 +308,7 @@ CREATE TABLE SNP_Literature (
 
 #### 4.2 Data Import
 
-The data is imported into the database using the following Python script:
-
-```python
-import pandas as pd
-from sqlalchemy import create_engine
-
-# create a database connection
-engine = create_engine('mysql+mysqlconnector://root:@localhost:3306/snpedia_db')
-
-# SNP relation contains information from two files: snps.csv and rsnums.csv
-# load data from these files into a Pandas DataFrames
-snps_df = pd.read_csv('dataset/snps.csv', index_col=0)
-rsnums_df = pd.read_csv('dataset/rsnums.csv', index_col=0)
-
-# Merge these DataFrames into a single DataFrame
-df = pd.merge(snps_df, rsnums_df, how="left", left_index=True, right_index=True)
-
-# Drop unused columns, rename columns to match the database schema
-df = df.drop(columns=["gene"]).rename(columns={"Description": "description", "Gene": "gene", "Chromosome": "chromosome", "Position": "position"})[["description", "chromosome", "gene", "position"]]
-
-# Write the DataFrame to the database
-df.to_sql('SNP', con=engine, if_exists='append', index_label="id")
-```
+The data is imported into the database using the iPtyhon notebook "import_data.ipynb". The contents of the notebook are provided in the Appendix. To import the data, the Pandas `to_sql` method is used along with the SQLAlchemy library. This method generates a series of `INSERT` statements to import the data into the database. This approach is both simpler and safer than constructing and executing SQL statements manually.
 
 ### 5. Web application
 
@@ -341,3 +319,6 @@ Amato, N. (2023) _Mastering database normalization: A comprehensive exploration 
 Lewis, D. (2016). _CO2209 Database systems._ London: University of London.
 
 Wikipedia contributors. (2023) _Multivalued dependency_ [Online] Wikipedia, The Free Encyclopedia. Available from: https://en.wikipedia.org/wiki/Multivalued_dependency [17 December 2023].
+
+### 7. Appendix
+
