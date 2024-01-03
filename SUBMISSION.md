@@ -10,11 +10,19 @@
 mysql -u root
 CREATE DATABASE snpedia_db;
 mysql -u root snpedia_db < snpedia_db.sql
+
+mysql -u root
+use snpedia_db;
+CREATE USER 'snpedia_user' IDENTIFIED BY 'J8FvnyBlkY';
+GRANT SELECT ON snpedia_db.* TO 'snpedia_user';
+
 10. Run the web server:
 cd app/
 npm run dev
 
-11. Add CAPTION: SNPedia is a wiki-based bioinformatics website that serves as a database of single nucleotide polymorphisms.
+11. https://snpedia.com/
+
+Add CAPTION: SNPedia is a wiki-based bioinformatics website that serves as a database of single nucleotide polymorphisms.
 AND TITLE: SNPedia
 
 12. Add Exceptionals:
