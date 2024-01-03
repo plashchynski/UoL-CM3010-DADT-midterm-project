@@ -139,3 +139,5 @@ dataset/*
 .DS_Store
 
 *.pdf
+
+*.sql
