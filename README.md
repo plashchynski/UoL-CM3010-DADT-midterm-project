@@ -41,7 +41,7 @@ The data extraction process is implemented in the iPython notebook "build_datase
 
 Initially, raw data is gathered from SNPedia using the [MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page) using the `requests` HTTP client library. This data is temporarily stored in a Pandas DataFrame for subsequent processing. The `mwparserfromhell` package is then used to parse the raw data, extracting relevant information from the Wikitext markup. Upon completion of this parsing step, the refined data is saved into CSV files using the 'to_csv' method of Pandas.
 
-More details about the data extraction process can be found in the iPython notebook "build_dataset.ipynb".
+More details about the data extraction process can be found in the iPython notebook "build_dataset.ipynb" the contents of which are provided in the Appendix.
 
 #### 2.4 The structure of the dataset
 
