@@ -1,4 +1,5 @@
 1. Download PDF Report from Google DOC https://docs.google.com/document/d/1Pgu6qFE3GIhIHRQlGMqlamtdDpdV-Sz1Ke--UqCPGU0/edit
+2. . .venv/bin/activate
 2. Generate PDFs using gen_report.sh
 3. Add resulting pdfs to the end of the report using Preview
 4. Create MySQL dump of the database using: mysqldump -u root snpedia_db > snpedia_db.sql
