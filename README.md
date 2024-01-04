@@ -358,18 +358,22 @@ SELECT SNP.id, SNP.description, Genotype.magnitude, Genotype.repute, Genotype.su
 ```
 
 
-##### Top 100 most important SNPs
+##### Explore SNPs
 
-The following query created to retrieve the top 100 most important SNPs:
+The following query created to explore all SNPs in the database, ordered by their magnitude (importance) and paginated:
 
 ```sql
 SELECT SNP.id, SNP.description, Genotype.magnitude, Genotype.repute, Genotype.summary, Genotype.description, Genotype.allele1, Genotype.allele2 \
         FROM SNP
         JOIN Genotype ON SNP.id = Genotype.snp_id
         ORDER BY Genotype.magnitude DESC
-        LIMIT 100;
+        LIMIT ? OFFSET ?; -- Used for pagination
 ```
-The `Genotype.magnitude` used to sort the results in descending order, so the most important SNPs are at the top of the list.
+The `Genotype.magnitude` used to sort the results in descending order, so the most important SNPs are at the top of the list. Also, the `LIMIT` and `OFFSET` clauses used for pagination, so the results can be displayed in pages. The COUNT aggregate function used to count the total number of SNPs in the database to calculate the total number of pages:
+
+```sql
+SELECT COUNT(*) FROM SNP JOIN Genotype ON SNP.id = Genotype.snp_id;
+```
 
 #### 4.4 Query optimization
 
@@ -430,12 +434,15 @@ The web application was evaluated using the following scenario:
 5. Wait for the analysis to complete, 20-30 seconds on Apple M1.
 6. A sample report should be displayed. The report contains a list of SNPs ordered by their magnitude, along with their interpretation, magnitude, reputation, and other information:
 7. Click "Explore SNPs" link to view the list of all SNPs in the database, ordered by their magnitude:
+8. Pagination at the bottom of the page allows navigating through the list of SNPs:
+
+Pagination allows navigating through the list of SNPs. The number of SNPs per page can be configured in the `.env` file. The default value is 100.
 
 ### 6. Reflection
 
 A fully functional web application was developed with a useful set of features. The application allows users to upload a 23andMe raw data file and generate a report that lists the most important SNPs in the file and their interpretation. The application also allows users to explore all SNPs in the database and view their details. Some of the research questions outlined in the previous sections can be answered using this application.
 
-The user interface of the application is sketch as it was not the primary focus of this project. The application could be improved by adding a more user-friendly interface, such as a wizard that guides the user through the process of uploading a file and generating a report. Also, a pagination feature could be added to the report and "Explore SNPs" page to make it easier to navigate through the list of SNPs.
+The user interface of the application is sketch as it was not the primary focus of this project. The application could be improved by adding a more user-friendly interface, such as a wizard that guides the user through the process of uploading a file and generating a report.
 
 ### 7. References
 
