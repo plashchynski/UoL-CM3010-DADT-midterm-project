@@ -12,6 +12,18 @@ Explore SNPs
     </div>
 </div>
 
+<!-- Search form -->
+<div class="row">
+    <div class="col-12">
+        <form action="/explore" method="GET">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="search" placeholder="Search for a SNP id or description" value="<%= search %>">
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <% for (var i = 0; i < results.length; i++) { %>
     <div class="row">
         <div class="col-12">
@@ -58,7 +70,7 @@ Explore SNPs
                     </li>
                 <% } else { %>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<%= page - 1 %>" tabindex="-1" aria-disabled="true">Previous</a>
+                        <a class="page-link" href="?page=<%= page - 1 %>&search=<%= search %>" tabindex="-1" aria-disabled="true">Previous</a>
                     </li>
                 <% } %>
 
@@ -70,18 +82,18 @@ Explore SNPs
                             <span class="page-link"> <%= i %> </span>
                         </li>
                     <% } else { %>
-                        <li class="page-item"><a class="page-link" href="?page=<%= i %>"> <%= i %> </a></li>
+                        <li class="page-item"><a class="page-link" href="?page=<%= i %>&search=<%= search %>"> <%= i %> </a></li>
                     <% } %>
                 <% } %>
 
                 <!-- Next button -->
-                <% if (page == page_count) { %>
+                <% if (page == page_count || page_count == 0) { %>
                     <li class="page-item disabled">
                         <span class="page-link">Next</span>
                     </li>
                 <% } else { %>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<%= page + 1 %>">Next</a>
+                        <a class="page-link" href="?page=<%= page + 1 %>&search=<%= search %>">Next</a>
                     </li>
                 <% } %>
             </ul>
