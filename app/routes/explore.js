@@ -10,11 +10,8 @@ router.get('/', async (req, res, next) => {
         ORDER BY Genotype.magnitude DESC \
         LIMIT 100;';
 
-
     // get the data from the database
     const results = await db.query(query);
-
-    console.log(results);
 
     // render the page
     res.render('explore', { results });

@@ -4,7 +4,7 @@ var router = express.Router();
 
 /* POST process. */
 router.post('/', async (req, res, next) => {
-  
+
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.render('home');
   }
@@ -43,13 +43,14 @@ router.post('/', async (req, res, next) => {
                     FROM SNP \
                     JOIN Genotype ON SNP.id = Genotype.snp_id \
                 WHERE ' +
-                dna_data.map(item => `(SNP.id = '${item.snp_id}' AND Genotype.allele1 = '${item.allele1}' AND Genotype.allele2 = '${item.allele2}')`).join(' OR ') +
+                dna_data.map(item => `(SNP.id = ? AND Genotype.allele1 = ? AND Genotype.allele2 = ?)`).join(' OR ') +
                 ' ORDER BY Genotype.magnitude DESC \
                 LIMIT 100;';
 
-  const results = await db.query(query);
+  // Use a parameterized query to avoid SQL injection
+  const params = dna_data.map(item => [item.snp_id, item.allele1, item.allele2]).flat();
 
-  console.log(results);
+  const results = await db.query(query, params);
 
   res.render('results', { results });
 });

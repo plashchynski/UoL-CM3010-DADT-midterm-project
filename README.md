@@ -414,6 +414,8 @@ CREATE USER 'snpedia_user' IDENTIFIED BY 'password';
 GRANT SELECT ON snpedia_db.* TO 'snpedia_user';
 ```
 
+To prevent SQL injection attacks, the web application uses prepared statements. Prepared statements are a feature of the MySQL client library that allows for the safe execution of SQL queries by separating the query string from the query parameters. The parameters are checked for validity automatically, before the query is executed.
+
 ### 5. Web application
 
 Application code is located in the `app` directory. It is implemented using the [Express.js](https://expressjs.com/) web application framework for Node.js. The application uses the [ejs](https://ejs.co/) template engine to render HTML pages and `mysql2` library to connect to the MySQL database.
