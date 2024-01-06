@@ -55,11 +55,11 @@ In summary, the dataset from SNPedia offers real, openly accessible data that is
 
 The dataset from SNPedia is full of useful information that can help answer many research questions. This project focuses on the following key questions:
 
+* *Genetic test interpretation:* Customers of personal genomics services, such as [23andMe](https://www.23andme.com/), are able to download their [raw genetic data](https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-Your-Raw-Genetic-Data) in a text file. This file contains a list of SNPs and their genotypes. Can the dataset be used to interpret this data and provide a report about the traits or diseases linked to these SNPs?
+
 * *Most Important SNPs:* Which SNPs have the greatest magnitude, indicating a strong impact on traits or diseases? This question seeks to identify SNPs that play a major role in human health and characteristics.
 
 * *SNPs Related to Specific Traits or Diseases:* Are there specific SNPs linked to certain traits or diseases? A keyword search function could be useful for finding these connections in the dataset.
-
-* *Use with Personal Genomics Services:* If there is a list of SNPs and their genotypes, like those provided by personal genomics services such as 23andMe, can the dataset be used to create a report about the traits or diseases linked to these SNPs? This aspect explores how the SNPedia data can be used to make personalized health reports based on someone's genetic information.
 
 #### 2.3 Data extraction
 
@@ -337,8 +337,13 @@ CREATE TABLE SNP_Literature (
 
 The data is imported into the database using the iPtyhon notebook "import_data.ipynb". The contents of the notebook are provided in the Appendix. To import the data, the Pandas `to_sql` method is used along with the SQLAlchemy library. This method generates a series of `INSERT` statements to import the data into the database. This approach is both simpler and safer than constructing and executing SQL statements manually.
 
+#### 4.3 Reflection
 
-#### 4.3 Queries
+The dataset perfectly fits the relational database model. The dataset was designed to be fully compatible with the relational database model. However, it was not one-to-one mapping between the dataset and the database schema. For example, the `pmids.csv` file contains not normalized data, as a title of a paper is repeated for each PMID and each PMID is repeated for each SNP. The aforementioned import script normalized this data into two separate tables: _Literature_ and _SNP_Literature_. It is a usual practice to have a less normalized data in CSV files for simplicity, as CSV datasets are usually read-only and not subject to update anomalies.
+
+The `clinvars.csv` file contains advanced information about SNPs, it was not included in the database schema, as this information is not required for the research questions outlined in this project. However, the database schema was designed in an extensible way that allows for the integration of this information in the future.
+
+#### 4.4 Queries
 
 ##### Query information about genotypes
 
@@ -434,7 +439,8 @@ Application code is located in the `app` directory. It is implemented using the 
 The web application was evaluated using the following scenario:
 1. Run the web application using `npm run dev`.
 2. Open the web application in a browser at http://localhost:3000/:
-3. On the home page, click the "Choose file" and select the `test.txt` file from the `app/sample` directory. This is a sample 23andMe file with a list of SNPs and their genotypes, truncated to 10000 SNPs to be processed faster.
+3. On the home page, click the "Choose file" and select the `test.txt` file from the `app/sample` directory. This is a sample 23andMe 
+raw genetic data file with a list of SNPs and their genotypes, truncated to 10000 SNPs to be processed faster.
 4. Click the "Analyze" button.
 5. Wait for the analysis to complete, 20-30 seconds on Apple M1.
 6. A sample report should be displayed. The report contains a list of SNPs ordered by their magnitude, along with their interpretation, magnitude, reputation, and other information:
@@ -446,7 +452,7 @@ Pagination allows navigating through the list of SNPs. The number of SNPs per pa
 
 ### 6. Reflection
 
-A fully functional web application was developed with a useful set of features. The application allows users to upload a 23andMe raw data file and generate a report that lists the most important SNPs in the file and their interpretation. The application also allows users to explore all SNPs in the database and view their details. Some of the research questions outlined in the previous sections can be answered using this application.
+A fully functional web application was developed with a useful set of features. The application allows users to upload a raw genetic data file from genetic testing services, such as 23andMe, and generate a report that lists the most important SNPs in the file and their interpretation. The application also allows users to explore all SNPs in the database and view their details. All of the research questions outlined in the previous sections can be answered using this application.
 
 The user interface of the application is sketch as it was not the primary focus of this project. The application could be improved by adding a more user-friendly interface, such as a wizard that guides the user through the process of uploading a file and generating a report.
 

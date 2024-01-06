@@ -1,4 +1,4 @@
-1. Download PDF Report from Google DOC https://docs.google.com/document/d/1Pgu6qFE3GIhIHRQlGMqlamtdDpdV-Sz1Ke--UqCPGU0/edit
+1. Download PDF Report from Google DOC https://docs.google.com/document/d/1EhHkGs-h_qpA1em43lUtIBLx0wzwx_na54TkvXFyQ7o/edit
 2. . .venv/bin/activate
 2. Generate PDFs using gen_report.sh
 3. Add resulting pdfs to the end of the report using Preview
@@ -30,12 +30,11 @@ AND TITLE: SNPedia
 
 I web scraped the data from the website and built my own dataset.
 
-
 This dataset is valuable beyond the scope of this project, as it can be useful for other projects as well.
-
 
 I used MySQL data types not covered in class (ENUM, TEXT).
 
+I used MySQL FULLTEXT search feature not covered in class.
 
 I have performed a query optimization by using the EXPLAIN command and adding indexes to the tables.
 
