@@ -434,6 +434,12 @@ To prevent SQL injection attacks, the web application uses prepared statements. 
 
 Application code is located in the `app` directory. It is implemented using the [Express.js](https://expressjs.com/) web application framework for Node.js. The application uses the [ejs](https://ejs.co/) template engine to render HTML pages and `mysql2` library to connect to the MySQL database.
 
+The app implements two scenarios of use according to the research questions outlined in the previous sections:
+
+1. Upload a raw genetic data file from a personal genomics service, such as 23andMe, and generate a report that lists the most important SNPs in the file and their interpretation. This scenario is implemented on the home page of the application. In files `app/routes/home.js` and `app/routes/analyze.js`. The `analyze.js` file contains the logic for processing the uploaded file and generating the report. The `app/views/results.ejs` file contains the HTML template for the report.
+
+2. Explore all SNPs in the database and view their details. This scenario is implemented on the "Explore SNPs" page of the application. In files `app/routes/explore.js` and `app/views/explore.ejs`. The `explore.js` file contains the logic for querying the database, paginating the results, and full-text search. The `app/views/explore.ejs` file contains the HTML template for the list of SNPs.
+
 #### 5.1 Evaluation
 
 The web application was evaluated using the following scenario:
