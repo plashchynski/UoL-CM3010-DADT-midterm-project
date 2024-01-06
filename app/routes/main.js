@@ -1,3 +1,5 @@
+// Student code start
+
 const homeRouter = require('./home');
 const analyzeRouter = require('./analyze');
 const exploreRouter = require('./explore');
@@ -10,3 +12,5 @@ module.exports = (app) => {
     app.use('/analyze', analyzeRouter);
     app.use('/explore', exploreRouter);
 };
+
+// Student code ends
